@@ -570,3 +570,17 @@ console.log(someNoPrice)
 // 11
 const allPrice = foods.every((food) => typeof(food.price) !== 'number')
 console.log(allPrice)
+
+// 12
+// forEach loops through an array, useful if you need the index as well as each item in array
+// map tranforms the values of an array and creates a new array with the transformed values
+// filter creates a new array where the values are only the values that have passed the filter condition
+// reduce accumulates all array elements into a single element or object
+
+// 13
+// find returns the first occurance of the element in an array that passes the criteria specified
+// findIndex retursn the index of the first occurance in an array that passes criteria
+
+// 14
+// some returns a boolean that represents whether 1 or more elements in the array pass the criteria
+// every returns a boolean that represents whether every element in the array passes the critera
