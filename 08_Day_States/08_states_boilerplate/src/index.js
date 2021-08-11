@@ -1,7 +1,10 @@
 // index.js
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import asabenehImage from './images/asabeneh.jpg'
+
+// load data
+import { countriesData } from './data/countries.js'
 
 // Fuction to show month date year
 
@@ -149,6 +152,9 @@ class Main extends React.Component {
             style={buttonStyles}
           />
           <Count count={count} addOne={addOne} minusOne={minusOne} />
+          <div style={{display: 'flex', justifyContent: 'center'}}>
+            <CountryGenerator />
+          </div>
         </div>
       </main>
     )
@@ -172,6 +178,61 @@ class Footer extends React.Component {
   }
 }
 
+const CountryCard = (props) => {
+  const { country } = props
+
+  const cardStyles = {
+    width: '50%',
+    minWidth: '300px',
+    padding: '25px',
+    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+    backgroundColor: 'white',
+    color: 'black'
+  }
+
+  const flagStyles = {
+    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'
+  }
+
+  return (
+    <div style={cardStyles}>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div style={{textAlign: 'center'}}>
+          <img src={country.flag} alt={country.name} height='200px' style={flagStyles}></img>
+          <p style={{padding: '10px 0px', textTransform: 'uppercase', fontSize: '1.2rem', fontWeight: 'bold'}}>{country.name}</p>
+        </div>
+      </div>
+      <div>
+        <p><b>Capital:</b> {country.capital}</p>
+        <p><b>Language:</b> {country.languages?.join(', ')}</p>
+        <p><b>Population:</b> {country.population?.toLocaleString()}</p>
+        <p><b>Currency:</b> {country.currency}</p>
+      </div>
+    </div>
+  )
+}
+
+const CountryGenerator = () => {
+  const [country, setCountry] = useState({})
+
+  const generateNewCountry = useCallback(() => {
+    const n = countriesData.length
+    const i = Math.floor(Math.random() * n)
+    setCountry(countriesData[i])
+  }, [])
+
+  useEffect(() => {
+    generateNewCountry()
+  }, [generateNewCountry])
+
+  return (
+    <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <CountryCard country={country}/>
+      <button onClick={generateNewCountry} style={{...buttonStyles, marginTop: '30px'}}>Select Country</button>
+    </div>
+  )
+}
+
 class App extends React.Component {
   state = {
     count: 0,
@@ -179,6 +240,7 @@ class App extends React.Component {
       backgroundColor: '',
       color: '',
     },
+    theme: 'light'
   }
   showDate = (time) => {
     const months = [
@@ -215,7 +277,33 @@ class App extends React.Component {
   greetPeople = () => {
     alert('Welcome to 30 Days Of React Challenge, 2020')
   }
-  changeBackground = () => {}
+
+  changeBackground = () => {
+    let defaultStyles = {
+      backgroundColor: '',
+      color: ''
+    }
+
+    const darkStyles = {
+        backgroundColor: 'black',
+        color: 'white'
+    }
+
+    if (this.state.theme === 'light') {
+      this.setState({
+        styles: darkStyles,
+        theme: 'dark'
+      })
+    } else if (this.state.theme === 'dark') {
+      this.setState({
+        styles: defaultStyles,
+        theme: 'light'
+      })
+    }
+
+
+  }
+
   render() {
     const data = {
       welcome: 'Welcome to 30 Days Of React',
@@ -233,8 +321,7 @@ class App extends React.Component {
     const user = { ...data.author, image: asabenehImage }
 
     return (
-      <div className='app'>
-        {this.state.backgroundColor}
+      <div className='app' style={this.state.styles}>
         <Header data={data} />
         <Main
           user={user}
@@ -246,7 +333,6 @@ class App extends React.Component {
           minusOne={this.minusOne}
           count={this.state.count}
         />
-        <Footer date={new Date()} />
       </div>
     )
   }
