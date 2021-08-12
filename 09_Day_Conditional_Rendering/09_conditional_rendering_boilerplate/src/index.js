@@ -1,5 +1,5 @@
 // index.js
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 
 // class based component
@@ -115,6 +115,8 @@ class Main extends React.Component {
             {status}
           </div>
           <Message message={message} />
+          <SeasonSwitcher />
+          <DataLoader />
         </div>
       </main>
     )
@@ -148,6 +150,79 @@ class Footer extends React.Component {
       </footer>
     )
   }
+}
+
+const SeasonSwitcher = () => {
+  const [season, setSeason] = useState('winter')
+
+  const switchSeason = (season) => {
+    setSeason(season)
+  }
+
+  const calcBackground = () => {
+    let backgroundColor = 'blue'
+    if (season === 'autumn') {
+      backgroundColor = 'orange'
+    } else if (season === 'spring') {
+      backgroundColor = 'yellow'
+    } else if (season === 'summer') {
+      backgroundColor = 'green'
+    }
+    return backgroundColor
+  }
+
+  const wrapperStyle = {
+    height: '300px',
+    border: '1px solid lightgray',
+    margin: '50px 0px',
+    borderRadius: '5px',
+    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+    padding: '20px',
+    backgroundColor: calcBackground()
+  }
+
+  return (
+    <div style={wrapperStyle}>
+      <div style={{display: 'flex'}}>
+        <button style={buttonStyles} onClick={() => switchSeason('autumn')}>Autumn</button>
+        <button style={buttonStyles} onClick={() => switchSeason('winter')}>Winter</button>
+        <button style={buttonStyles} onClick={() => switchSeason('spring')}>Spring</button>
+        <button style={buttonStyles} onClick={() => switchSeason('summer')}>Summer</button>
+      </div>
+    </div>
+  )
+}
+
+const retrieveData = () => {
+  return {
+    message: 'hello world'
+  }
+}
+
+const DataLoader = () => {
+  const [data, setData] = useState({})
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    setIsLoaded(false)
+    setTimeout(() => {
+      const res = retrieveData()
+      setData(res)
+      setIsLoaded(true)
+    }, 2000)
+  }, [])
+
+  return (
+    <div>
+    {
+      isLoaded ?
+      <div>{data.message}</div>
+      :
+      <div>loading</div>
+    }
+    </div>
+  )
+
 }
 
 class App extends React.Component {
@@ -216,8 +291,6 @@ class App extends React.Component {
           handleLogin={this.handleLogin}
           message={this.state.message}
         />
-
-        <Footer date={new Date()} />
       </div>
     )
   }
